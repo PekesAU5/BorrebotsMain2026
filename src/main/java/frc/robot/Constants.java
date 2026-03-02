@@ -11,6 +11,7 @@ import edu.wpi.first.math.util.Units;
 /** Add your docs here. */
 public class Constants {
 
+
     public static final class ControllerConstants{
         public static double controlDeadband = 0.03;
         public static double triggerDeadband = 0.1;
@@ -18,13 +19,19 @@ public class Constants {
     }
 
     public static final class ShooterConstants{
-        public static final int kShooterId = 1;
-        public static final int kfollowerId = 2;
-        public static boolean kShooterReversed = false;
+        public static final int kShooterId = 2;
+        public static boolean kShooterActive = false; 
+        public static boolean kShooterReversed = true;
+
         
     }
     
     public static final class DriveConstants{
+
+
+          public static final double kDirectionSlewRate = 2.4; // radians per second   original es 1.2
+    public static final double kMagnitudeSlewRate = 3.6; // percent per second (1 = 100%)  original es 1.8
+    public static final double kRotationalSlewRate = 4.0; // percent per second (1 = 100%)   original es 2.0
 // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
     public static  double kMaxSpeedMetersPerSecond = 1.2;
@@ -87,9 +94,10 @@ public class Constants {
 
 
 public static final class LimelightConstats{
-    public static double xPosSetpoint = -8;
-    public static final double xPosTolerance = 0.9;
-    public static final double yPosTolerance = 0.9;
+    public static double xPosSetpoint = 0 ;
+    public static final double xPosTolerance = 0.2;
+    public static double yPosSetpoint = 11;
+    public static final double yPosTolerance = 0.02;
     public static final double rotPosTolerance = 0.02;
 
 
