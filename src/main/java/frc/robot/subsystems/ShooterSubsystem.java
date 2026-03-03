@@ -4,30 +4,16 @@
 
 package frc.robot.subsystems;
 
-import java.lang.ModuleLayer.Controller;
-
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 
-public class shooterSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
 
  public enum ShootingStates{
   ACTIVE,
@@ -49,7 +35,7 @@ public class shooterSubsystem extends SubsystemBase {
   double transferoutput = 0.8;
   
   /** Creates a new shooterSubsystem. */
-  public shooterSubsystem() {
+  public ShooterSubsystem() {
 
     leftMotor = new VictorSPX(ShooterConstants.kShooterId);
 

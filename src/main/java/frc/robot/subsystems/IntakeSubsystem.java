@@ -14,18 +14,17 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.intakeConstants;
+import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  public enum IntakeState{
+  public enum IntakeState {
     INTAKING,
     HOME,
     IDLE
@@ -46,133 +45,103 @@ public class IntakeSubsystem extends SubsystemBase {
 // private PIDController pivotPid = new PIDController(0.08, 0.0, 0.0);
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
-    pivotSpark = new SparkMax(intakeConstants.kpivotId, MotorType.kBrushless);
-
-    rollerSpark = new SparkMax(intakeConstants.krollerId, MotorType.kBrushless);
+    pivotSpark = new SparkMax(IntakeConstants.kPivotId, MotorType.kBrushless);
+    rollerSpark = new SparkMax(IntakeConstants.kRollerId, MotorType.kBrushless);
 
     pivotSparkEncoder = pivotSpark.getEncoder();
-
     rollerSparkEncoder = rollerSpark.getEncoder();
 
-
     pivotConfig = new SparkMaxConfig();
-
     rollerConfig = new SparkMaxConfig();
-    
 
+    pivotConfig.idleMode(IdleMode.kBrake)
+            .inverted(IntakeConstants.kPivotInverted)
+            .smartCurrentLimit(50);
 
-    pivotConfig.
-    idleMode(IdleMode.kBrake).inverted(intakeConstants.kpivotInverted).smartCurrentLimit(50);
-
-    pivotConfig.encoder.positionConversionFactor(intakeConstants.kAngleFactor)
-    .velocityConversionFactor(intakeConstants.kAngleFactor/60);
-
+    pivotConfig.encoder.positionConversionFactor(IntakeConstants.kAngleFactor)
+            .velocityConversionFactor(IntakeConstants.kAngleFactor / 60);
 
     pivotSpark.configure(pivotConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
     rollerSpark.configure(rollerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-  
-
-
   }
 
 
-  public double getAngle(){
+    public double getAngle(){
     return pivotSparkEncoder.getPosition();
   }
 
-  public double getVelocity(){
+    public double getVelocity(){
     return pivotSparkEncoder.getVelocity();
   }
 
-public void setPower(double output){
+    public void setPower(double output){
   pivotSpark.set(output*0.2);
 }
 
-public void setState(int intstate){
-  switch (intstate) {
-    case 0:
-    state = IntakeState.IDLE;
-      break;
+    public void setState(int intstate){
+        switch (intstate) {
+            case 0:
+                state = IntakeState.IDLE;
+            break;
   
-    case 1:
-    state = IntakeState.INTAKING;
-      break;
+            case 1:
+                state = IntakeState.INTAKING;
+            break;
 
-    case 2:
-    state = IntakeState.HOME;
-  }
+            case 2:
+                state = IntakeState.HOME;
+            break;
+        }
+    }
 
-}
-public Command setAngle(double angle){
+    public Command setAngle(double angle){
  
 
-  return Commands.run(()->{
-    double output = pivotPid.calculate(getAngle(), angle);
-pivotSpark.setVoltage(MathUtil.clamp(-1, output, 1));
-  }, this).beforeStarting(()->pivotPid.reset(getAngle()), this);}
+        return Commands.run(()->{
+            double output = pivotPid.calculate(getAngle(), angle);
+            pivotSpark.setVoltage(MathUtil.clamp(-1, output, 1));
+    }, this).beforeStarting(()->pivotPid.reset(getAngle()), this);}
 
 
 
-public void setRollerPower(double output){
+    public void setRollerPower(double output){
   rollerSpark.set(output);
 }
 
-public void stopMotors(){
-  pivotSpark.stopMotor();
-  rollerSpark.stopMotor();
-}
-  @Override
-  public void periodic() {
-SmartDashboard.putNumber("pivotAngle", getAngle());
-SmartDashboard.putBoolean("atSetpoint", pivotPid.atSetpoint());
-SmartDashboard.putNumber("setpoint", pivotPid.getGoal().position);
- double output = 0.0;
- double rolleroutput = 0.0;
+    public void stopMotors(){
+        pivotSpark.stopMotor();
+        rollerSpark.stopMotor();
+    }
 
-switch (state) {
-  case INTAKING:
- 
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("pivotAngle", getAngle());
+        SmartDashboard.putBoolean("atSetpoint", pivotPid.atSetpoint());
+        SmartDashboard.putNumber("setpoint", pivotPid.getGoal().position);
+        double output = 0.0;
+        double rolleroutput = 0.0;
 
-  pivotPid.setGoal(intakeConstants.intakeposition);
-
-  
-  output = pivotPid.calculate(getAngle());
- 
-
-   
-
-    pivotSpark.set(MathUtil.clamp(-1, output*0.1, 1));
-
-    if(MathUtil.isNear(intakeConstants.intakeposition, getAngle(), 5.0)){rolleroutput = 0.7;}
-
-    rollerSpark.set(rolleroutput);
-    break;
-
-  case HOME:
-
-pivotPid.setGoal(intakeConstants.kHomePosition);
-  if(!MathUtil.isNear(intakeConstants.intakeposition, getAngle(), 5.0)){rolleroutput = 0.0;}
-
-    rollerSpark.set(rolleroutput);
- output = pivotPid.calculate(getAngle(), intakeConstants.kHomePosition);
-
-    // if(pivotPid.atSetpoint()) output = 0.0;
-
-    pivotSpark.set(MathUtil.clamp(-1, output*0.1, 1));
-
-    
-  break;
-
-  case IDLE:
-stopMotors();
-  break;
-  
-  
-}
-   
-SmartDashboard.putString("intakeState", state.toString());
-    // This method will be called once per scheduler run
+        switch (state) {
+            case INTAKING:
+                pivotPid.setGoal(IntakeConstants.intakePos);
+                output = pivotPid.calculate(getAngle());
+                pivotSpark.set(MathUtil.clamp(-1, output*0.1, 1));
+                if(MathUtil.isNear(IntakeConstants.intakePos, getAngle(), 5.0)) { rolleroutput = 0.7; }
+                rollerSpark.set(rolleroutput);
+            break;
+            case HOME:
+                pivotPid.setGoal(IntakeConstants.kHomePosition);
+                if(!MathUtil.isNear(IntakeConstants.intakePos, getAngle(), 5.0)){rolleroutput = 0.0;}
+                rollerSpark.set(rolleroutput);
+                output = pivotPid.calculate(getAngle(), IntakeConstants.kHomePosition);
+                // if(pivotPid.atSetpoint()) output = 0.0;
+                pivotSpark.set(MathUtil.clamp(-1, output*0.1, 1));
+                break;
+            case IDLE:
+                stopMotors();
+            break;
+        }
+        SmartDashboard.putString("intakeState", state.toString());
+        // This method will be called once per scheduler run
   }
 }

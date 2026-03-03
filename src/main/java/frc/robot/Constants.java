@@ -28,20 +28,20 @@ public class Constants {
         public static int kShooterChargedState = 2; 
     }
 
-    public static final class intakeConstants{
-        public static final int kpivotId = 31;
-        public static final int krollerId = 32;
-        public static boolean kpivotInverted = true;
-        public static boolean krollerInverted = false;
-        public static double kgearRatio = 80/14;
-        public static double kReductionFactor = 25*kgearRatio;
+    public static final class IntakeConstants {
+        public static final int kPivotId = 31;
+        public static final int kRollerId = 32;
+        public static boolean kPivotInverted = true;
+        public static boolean kRollerInverted = false;
+        public static double kGearRatio = 80/14;
+        public static double kReductionFactor = 25* kGearRatio;
         public static double kAngleFactor = 1 / kReductionFactor * 360;
-        public static double intakeposition = 70;
+        public static double intakePos = 70;
         public static double kHomePosition = 0.0;
 
-        public static int kintakeIdleState = 0;
+        public static int kIntakeIdleState = 0;
         public static int kIntakingState = 1;
-        public static int kintakeHomeState = 2;
+        public static int kIntakeHomeState = 2;
         
     }
     
