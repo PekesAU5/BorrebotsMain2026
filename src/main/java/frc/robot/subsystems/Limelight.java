@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstats;
-import pabeles.concurrency.ConcurrencyOps.Reset;
 
 
 
@@ -113,8 +112,18 @@ return id;
     }
 
     public double getDesiredRotation(){
+
       double Ty = LimelightHelpers.getTargetPose3d_RobotSpace(LL).getZ();
     double Tx = LimelightHelpers.getTargetPose3d_RobotSpace(LL).getX();
+
+
+    double vx = driveSubsystem.getRobotRelativeSpeeds().vxMetersPerSecond;
+    double vy = driveSubsystem.getRobotRelativeSpeeds().vyMetersPerSecond;
+
+    
+   
+
+
 
     switch (getId()) {
         case 8: Tx = Tx - Units.inchesToMeters(5); break;
@@ -128,9 +137,11 @@ return id;
         default: break;
     }
 
+    double velocityoffset =  Math.atan2(vy, vx);
+
     double desiredRotation = Math.atan2(Ty, Tx);
 
-    desiredRotation =90 - Math.toDegrees(desiredRotation);
+    desiredRotation =90 - Math.toDegrees(desiredRotation) + velocityoffset;
         
         return desiredRotation;
     }

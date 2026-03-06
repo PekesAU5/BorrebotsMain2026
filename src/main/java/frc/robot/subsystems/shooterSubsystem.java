@@ -4,28 +4,14 @@
 
 package frc.robot.subsystems;
 
-import java.lang.ModuleLayer.Controller;
-
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.IntakeSubsystem.IntakeState;
 
 public class shooterSubsystem extends SubsystemBase {
 
@@ -43,6 +29,8 @@ public class shooterSubsystem extends SubsystemBase {
    private VictorSPX transferMotor;
 
     private PIDController transferpid ;
+
+    Timer timer = new Timer();
   
   double shooteroutput = 0.8;
 
@@ -63,12 +51,12 @@ transferpid = new PIDController(1, 0.0, 0.0);
 
   public void setShootingPower(double output){
 
-   
+
 
     
 
 if(ShooterConstants.kShooterReversed){leftMotor.set(VictorSPXControlMode.PercentOutput, output);}
-else{leftMotor.set(VictorSPXControlMode.PercentOutput, -output);}
+else{leftMotor.set(VictorSPXControlMode.PercentOutput, output);}
 }
 
   public void reverseShoot(){
@@ -77,7 +65,7 @@ else{leftMotor.set(VictorSPXControlMode.PercentOutput, -output);}
 
 
   public boolean ShooterActive(){
-    if(shooteroutput > 0.1){
+    if(shooteroutput > 0.4){
       return true;
 
     }
@@ -130,20 +118,27 @@ public void setPowers(double shooteroutput, double transferoutput){
     SmartDashboard.putBoolean("ShooterReversed", ShooterConstants.kShooterReversed);
     SmartDashboard.putBoolean("ShooterActive", ShooterCharged());
     SmartDashboard.putString("shooterState", state.toString());
+    
     switch (state) {
       case IDLE:
       
-      setShootingPower(0.0);
+      setShootingPower(0.15);
 
       Transferpower(0.0);
-        
+      
+        if(timer.isRunning()){
+          timer.stop();
+          timer.reset();
+        }
+
         break;
     
       case ACTIVE:
 
+      timer.start();
       setShootingPower(shooteroutput);
 
-      if(ShooterCharged()){state = ShootingStates.CHARGED;
+      if(timer.advanceIfElapsed(2)){state = ShootingStates.CHARGED;
 Transferpower(transferoutput);}
       
       
@@ -152,6 +147,7 @@ Transferpower(transferoutput);}
         break;
     }
 
+    SmartDashboard.putNumber("time", timer.get());
     SmartDashboard.putNumber("transferoutput", transferMotor.getMotorOutputPercent());
     SmartDashboard.putNumber("shooterOutput", leftMotor.getMotorOutputPercent());
   }

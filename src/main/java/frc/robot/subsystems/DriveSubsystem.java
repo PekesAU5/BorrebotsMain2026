@@ -131,8 +131,8 @@ private double rotSpeedGlobal;
         });
 
          if(DriveConstants.kSlowMode) {
-DriveConstants.kMaxSpeedMetersPerSecond = 1.2;
-DriveConstants.kMaxAngularSpeed = Math.PI* 1.25;
+DriveConstants.kMaxSpeedMetersPerSecond = 0.5;
+DriveConstants.kMaxAngularSpeed = Math.PI*0.6;
        }else{
         DriveConstants.kMaxSpeedMetersPerSecond = 4.8;
         DriveConstants.kMaxAngularSpeed = 2*Math.PI;
@@ -325,6 +325,11 @@ driveRobotRelative(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, ge
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
+  }
+
+  public Command resetGyro(){
+    return Commands.runOnce(()->{m_gyro.reset();
+    }, this);
   }
 
   /**

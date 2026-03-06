@@ -13,7 +13,7 @@ public class Constants {
 
 
     public static final class ControllerConstants{
-        public static double controlDeadband = 0.03;
+        public static double controlDeadband = 0.05;
         public static double triggerDeadband = 0.1;
 
     }
@@ -36,12 +36,14 @@ public class Constants {
         public static double kgearRatio = 80/14;
         public static double kReductionFactor = 25*kgearRatio;
         public static double kAngleFactor = 1 / kReductionFactor * 360;
-        public static double intakeposition = 70;
-        public static double kHomePosition = 0.0;
+        public static double intakeposition = 62;
+        public static double kHomePosition = -0.4;
 
         public static int kintakeIdleState = 0;
         public static int kIntakingState = 1;
         public static int kintakeHomeState = 2;
+
+        public static double krollerIntakeRPM = 4000.0;
         
     }
     
@@ -53,8 +55,11 @@ public class Constants {
     public static final double kRotationalSlewRate = 4.0; // percent per second (1 = 100%)   original es 2.0
 // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static  double kMaxSpeedMetersPerSecond = 1.2;
-    public static  double kMaxAngularSpeed = Math.PI; // radians per second
+    public static  double kMaxSpeedMetersPerSecond = 4.8;
+    public static  double kMaxAngularSpeed = Math.PI*2
+    
+    
+    ; // radians per second
 
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(26.5);
@@ -89,7 +94,7 @@ public class Constants {
     public static final int kRearRightTurningCanId = 13;
     public static final int kRearLeftTurningCanId =14;
 
-    public static boolean kfieldRelative = false;
+    public static boolean kfieldRelative = true;
     public static final boolean kGyroReversed = false;
     public static boolean kSlowMode = false;
     }
