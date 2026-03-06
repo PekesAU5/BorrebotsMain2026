@@ -130,4 +130,8 @@ public static final class LimelightConstats{
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
+
+  public static final class LEDConstants {
+        public static final int TEJUINO_CAN_ID = 0;
+  }
 }
