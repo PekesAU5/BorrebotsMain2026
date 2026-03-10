@@ -1,7 +1,8 @@
-package frc.robot.led;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.led.TejuinoBoard;
 
 public class LEDHandler extends SubsystemBase {
     private final TejuinoBoard tejuinoBoard = new TejuinoBoard();
