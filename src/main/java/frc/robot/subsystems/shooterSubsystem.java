@@ -15,18 +15,31 @@ import frc.robot.Constants.ShooterConstants;
 
 public class shooterSubsystem extends SubsystemBase {
 
-    ShootingStates state = ShootingStates.IDLE;
-    Timer timer = new Timer();
-    double shooteroutput = 0.8;
-    double transferoutput = 0.8;
-    private VictorSPX leftMotor;
-    private PIDController shooterpid;
-    private VictorSPX transferMotor;
-    private PIDController transferpid;
+    public enum ShootingStates{
+        ACTIVE,
+        CHARGED,
+        IDLE
+    }
 
-    /**
-     * Creates a new shooterSubsystem.
-     */
+    ShootingStates state = ShootingStates.IDLE;
+    private VictorSPX leftMotor;
+
+    private PIDController shooterpid;
+
+    private VictorSPX transferMotor;
+    private VictorSPX transfer2Motor;
+
+    private PIDController transferpid;
+    private PIDController transfer2pid;
+
+    Timer timer = new Timer();
+
+    double shooteroutput = 0.95;
+    double transferoutput = 0.8;
+    double transfer2output = 0.8;
+
+
+    /** Creates a new shooterSubsystem. */
     public shooterSubsystem() {
 
         leftMotor = new VictorSPX(ShooterConstants.kShooterId);
@@ -34,36 +47,44 @@ public class shooterSubsystem extends SubsystemBase {
         shooterpid = new PIDController(1, 0.0, 0.0);
 
         transferMotor = new VictorSPX(3);
+        transfer2Motor = new VictorSPX(4);
 
         transferpid = new PIDController(1, 0.0, 0.0);
+        transfer2pid = new PIDController(1, 0.0, 0.0);
     }
 
-    public void setShootingPower(double output) {
+
+    public void setShootingPower(double output){
 
 
-        leftMotor.set(VictorSPXControlMode.PercentOutput, output);
+
+
+
+        if(ShooterConstants.kShooterReversed){leftMotor.set(VictorSPXControlMode.PercentOutput, output);}
+        else{leftMotor.set(VictorSPXControlMode.PercentOutput, output);}
     }
 
-    public void reverseShoot() {
+    public void reverseShoot(){
         ShooterConstants.kShooterReversed = !ShooterConstants.kShooterReversed;
     }
 
-    public boolean ShooterActive() {
-        if (shooteroutput > 0.4) {
+
+    public boolean ShooterActive(){
+        if(shooteroutput > 0.4){
             return true;
 
         }
         return false;
     }
 
-    public boolean ShooterCharged() {
-        if (MathUtil.isNear(shooteroutput, leftMotor.getMotorOutputPercent(), 0.075)) {
+    public boolean ShooterCharged(){
+        if( MathUtil.isNear(shooteroutput, leftMotor.getMotorOutputPercent(), 0.075) ){
             return true;
         }
         return false;
     }
 
-    public void setState(int intstate) {
+    public void setState(int intstate){
         switch (intstate) {
             case 0:
                 state = ShootingStates.IDLE;
@@ -80,20 +101,28 @@ public class shooterSubsystem extends SubsystemBase {
 
     }
 
-    public void setPowers(double shooteroutput, double transferoutput) {
+
+    public void setPowers(double shooteroutput, double transferoutput, double transfer2output){
         this.shooteroutput = shooteroutput;
         this.transferoutput = transferoutput;
+        this.transfer2output = transfer2output;
+
     }
 
-    public void Transferpower(double output) {
+    public void Transferpower(double output, double output2){
 
-        transferpid.calculate(transferMotor.getMotorOutputPercent(), output);
+        transferpid.calculate(transferMotor.getMotorOutputPercent(),output);
         transferMotor.set(VictorSPXControlMode.PercentOutput, output);
+
+        transfer2pid.calculate(transfer2Motor.getMotorOutputPercent(),output2);
+        transfer2Motor.set(VictorSPXControlMode.PercentOutput, output2);
     }
 
-    public void stopTransfer() {
+    public void stopTransfer(){
         transferMotor.set(VictorSPXControlMode.PercentOutput, 0.0);
+        transfer2Motor.set(VictorSPXControlMode.PercentOutput, 0.0);
     }
+
 
     @Override
     public void periodic() {
@@ -106,9 +135,9 @@ public class shooterSubsystem extends SubsystemBase {
 
                 setShootingPower(0.15);
 
-                Transferpower(0.0);
+                Transferpower(0.0, 0.0);
 
-                if (timer.isRunning()) {
+                if(timer.isRunning()){
                     timer.stop();
                     timer.reset();
                 }
@@ -120,10 +149,8 @@ public class shooterSubsystem extends SubsystemBase {
                 timer.start();
                 setShootingPower(shooteroutput);
 
-                if (timer.advanceIfElapsed(2)) {
-                    state = ShootingStates.CHARGED;
-                    Transferpower(transferoutput);
-                }
+                if(timer.advanceIfElapsed(1)){state = ShootingStates.CHARGED;
+                    Transferpower(transferoutput,transfer2output);}
 
 
             case CHARGED:
@@ -133,13 +160,7 @@ public class shooterSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("time", timer.get());
         SmartDashboard.putNumber("transferoutput", transferMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber("transfer2output", transfer2Motor.getMotorOutputPercent());
         SmartDashboard.putNumber("shooterOutput", leftMotor.getMotorOutputPercent());
-    }
-
-
-    public enum ShootingStates {
-        ACTIVE,
-        CHARGED,
-        IDLE
     }
 }

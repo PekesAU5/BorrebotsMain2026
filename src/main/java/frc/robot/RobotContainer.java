@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
@@ -20,14 +19,12 @@ import frc.robot.Constants.intakeConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.Limelight;
+
 import frc.robot.subsystems.shooterSubsystem;
 
 
-/**
- * Add your docs here.
- */
+/** Add your docs here. */
 public class RobotContainer {
-
 
     DriveSubsystem Chassis = new DriveSubsystem();
     shooterSubsystem shooter = new shooterSubsystem();
@@ -40,34 +37,31 @@ public class RobotContainer {
     CommandXboxController m_Controller = new CommandXboxController(0);
     CommandXboxController m_Controller1 = new CommandXboxController(1);
 
-    //CommandPS5Controller m_Controller = new CommandPS5Controller(0);
 
-    public RobotContainer() {
+    public RobotContainer(){
 
         configureButtons();
 
-        Chassis.setDefaultCommand(new RunCommand(() -> Chassis.drive(
+        Chassis.setDefaultCommand(new RunCommand(()-> Chassis.drive(
                 MathUtil.applyDeadband(-m_Controller.getLeftX(), ControllerConstants.controlDeadband),
                 MathUtil.applyDeadband(m_Controller.getLeftY(), ControllerConstants.controlDeadband),
                 MathUtil.applyDeadband(-m_Controller.getRightX(), ControllerConstants.controlDeadband),
                 DriveConstants.kfieldRelative), Chassis));
 
-    //  limelight.setDefaultCommand(new RunCommand(()->limelight.stopCommand(), limelight));
+//  limelight.setDefaultCommand(new RunCommand(()->limelight.stopCommand(), limelight));
 
-        shooter.setDefaultCommand(new InstantCommand(() -> shooter.setState(ShooterConstants.kShooterIdle), shooter));
+        shooter.setDefaultCommand(new InstantCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
 
 
-    //  intake.setDefaultCommand(new InstantCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
-    //  shooter.setDefaultCommand(new RunCommand(()-> shooter.setShootingPower(m_Controller.getLeftX()), shooter));
+//  intake.setDefaultCommand(new InstantCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
+//  shooter.setDefaultCommand(new RunCommand(()-> shooter.setShootingPower(m_Controller.getLeftX()), shooter));
 
 
         autoChooser = AutoBuilder.buildAutoChooser();
-
         SmartDashboard.putData("Auto Chooser", autoChooser);
-
     }
 
-    private void configureButtons() {
+    private void configureButtons(){
 
         // m_Controller.start().onTrue(Chassis.changeDrivingMode());
 
@@ -75,11 +69,10 @@ public class RobotContainer {
 
         m_Controller.rightBumper().whileTrue(limelight.AllignXAxis(m_Controller));
 
-        m_Controller.rightTrigger(0.05).whileTrue(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterActiveState), shooter)).whileFalse(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterIdle), shooter));
+        m_Controller.rightTrigger(0.05).whileTrue(new RunCommand(()->shooter.setState(ShooterConstants.kShooterActiveState), shooter)).whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
 
 
         // m_Controller.rightTrigger(0.05).whileTrue(Commands.run(()->{transfer.activateTransfer(0.6);}, transfer).unless(()->!shooter.ShooterCharged()));
-
 
         m_Controller.a().onTrue(Chassis.resetGyro());
 
@@ -87,22 +80,22 @@ public class RobotContainer {
 
         m_Controller.start().onTrue(Chassis.changeDrivingMode());
 
+
         // m_Controller.a().onTrue(new InstantCommand(()-> Chassis.zeroHeading(), Chassis));
+
         m_Controller.leftTrigger(0.05)
-                .whileTrue(new RunCommand(() -> intake.setState(intakeConstants.kIntakingState), intake))
-                .whileFalse(new RunCommand(() -> intake.setState(intakeConstants.kintakeIdleState), intake));
-
-        m_Controller.leftBumper().onTrue(new RunCommand(() -> intake.setState(intakeConstants.kintakeHomeState), intake));
-
-
+                .whileTrue(new RunCommand(()->intake.setState(intakeConstants.kIntakingState), intake))
+                .whileFalse(new RunCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
+        m_Controller.rightBumper().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake));
+        m_Controller.leftBumper().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake));
     }
 
 
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+    public Command getAutonomousCommand(){
+        return null;
     }
 
-    public void shuffleboardData() {
+    public void shuffleboardData(){
 
     }
 
