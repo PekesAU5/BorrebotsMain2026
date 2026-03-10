@@ -89,10 +89,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
 desiredAngle = 0.0;
 
-// pivotPid.setSetpoint(desiredAngle);
 
-
-// pivotPid.reset();
 
   }
 
@@ -175,10 +172,8 @@ if(desiredAngle != intakeConstants.intakeposition && pivotPid.atSetpoint()){pivo
     // pivotPid.setSetpoint(desiredAngle, ControlType.kMAXMotionPositionControl);
   
 pivotSpark.set(output);
-    if(aroundAngle(intakeConstants.intakeposition)){rolleroutput = 0.6;}
-    // else if(!(aroundAngle(intakeConstants.kHomePosition) || aroundAngle(intakeConstants.intakeposition))){
-    //   rolleroutput = -0.2;
-    // }
+    if(aroundAngle(intakeConstants.intakeposition)){rolleroutput = 0.8;}
+
 
     rollerSpark.set(rolleroutput);
     break;
@@ -191,10 +186,10 @@ pivotSpark.set(output);
 
     rollerSpark.set(rolleroutput);
     output = MathUtil.clamp(pivotPid.calculate(getpivotAngle()), -1, 1);
-//  pivotPid.setSetpoint(desiredAngle, ControlType.kMAXMotionPositionControl);
+
 
 pivotSpark.set(output);
-    // if(pivotPid.atSetpoint()) output = 0.0;
+    
 
    
 

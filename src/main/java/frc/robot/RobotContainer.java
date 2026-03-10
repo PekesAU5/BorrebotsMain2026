@@ -5,13 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
@@ -72,11 +68,10 @@ private void configureButtons(){
 
     m_Controller.rightBumper().whileTrue(limelight.AllignXAxis(m_Controller));
 
-m_Controller.rightTrigger(0.05).whileTrue(new RunCommand(()->shooter.setState(ShooterConstants.kShooterActiveState), shooter)).whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
+    m_Controller.rightTrigger(0.05).whileTrue(new RunCommand(()->shooter.setState(ShooterConstants.kShooterActiveState), shooter)).whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
 
 
     // m_Controller.rightTrigger(0.05).whileTrue(Commands.run(()->{transfer.activateTransfer(0.6);}, transfer).unless(()->!shooter.ShooterCharged()));
-
 
     m_Controller.a().onTrue(Chassis.resetGyro());
 
@@ -84,21 +79,18 @@ m_Controller.rightTrigger(0.05).whileTrue(new RunCommand(()->shooter.setState(Sh
 
     m_Controller.start().onTrue(Chassis.changeDrivingMode());
 
+
     // m_Controller.a().onTrue(new InstantCommand(()-> Chassis.zeroHeading(), Chassis));
+
 m_Controller.leftTrigger(0.05)
 .whileTrue(new RunCommand(()->intake.setState(intakeConstants.kIntakingState), intake))
 .whileFalse(new RunCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
-
-m_Controller.leftBumper().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake));
-    
-
-       
+m_Controller.rightBumper().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake));
+ m_Controller.leftBumper().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake));
 }   
 
 
 public Command getAutonomousCommand(){
-
-
     return null;
 }
 

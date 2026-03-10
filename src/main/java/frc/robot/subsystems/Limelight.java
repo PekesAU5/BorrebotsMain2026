@@ -32,7 +32,7 @@ public class Limelight extends SubsystemBase{
     PIDController xPidController;
     
     
-
+double velocityoffset = 0.0;
 
 
 
@@ -76,6 +76,7 @@ SmartDashboard.putNumber("xSetpoint", LimelightConstats.xPosSetpoint);
 SmartDashboard.putNumber("zSetpoint", LimelightConstats.yPosSetpoint);
 SmartDashboard.putNumber("DesiredRotation", getDesiredRotation());
 SmartDashboard.putNumber("Rotation Error", zPidController.getError());
+   SmartDashboard.putNumber("VelocityOffset", velocityoffset);
 
 if(!hasTarget()){
     xoutput = 0.0;
@@ -137,11 +138,11 @@ return id;
         default: break;
     }
 
-    double velocityoffset =  Math.atan2(vy, vx);
+    velocityoffset =  Math.atan2(vy, vx);
 
     double desiredRotation = Math.atan2(Ty, Tx);
 
-    desiredRotation =90 - Math.toDegrees(desiredRotation) + velocityoffset;
+    desiredRotation =90 - Math.toDegrees(desiredRotation);
         
         return desiredRotation;
     }
