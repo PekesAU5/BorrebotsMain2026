@@ -41,11 +41,7 @@ public class shooterSubsystem extends SubsystemBase {
     public void setShootingPower(double output) {
 
 
-        if (ShooterConstants.kShooterReversed) {
-            leftMotor.set(VictorSPXControlMode.PercentOutput, output);
-        } else {
-            leftMotor.set(VictorSPXControlMode.PercentOutput, output);
-        }
+        leftMotor.set(VictorSPXControlMode.PercentOutput, output);
     }
 
     public void reverseShoot() {

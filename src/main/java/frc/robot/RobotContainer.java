@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
@@ -24,17 +28,19 @@ import frc.robot.subsystems.shooterSubsystem;
  */
 public class RobotContainer {
 
+
     DriveSubsystem Chassis = new DriveSubsystem();
     shooterSubsystem shooter = new shooterSubsystem();
 
     Limelight limelight = new Limelight(Chassis);
 
     IntakeSubsystem intake = new IntakeSubsystem();
-    //  private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser;
 
     CommandXboxController m_Controller = new CommandXboxController(0);
     CommandXboxController m_Controller1 = new CommandXboxController(1);
 
+    //CommandPS5Controller m_Controller = new CommandPS5Controller(0);
 
     public RobotContainer() {
 
@@ -46,18 +52,18 @@ public class RobotContainer {
                 MathUtil.applyDeadband(-m_Controller.getRightX(), ControllerConstants.controlDeadband),
                 DriveConstants.kfieldRelative), Chassis));
 
-//  limelight.setDefaultCommand(new RunCommand(()->limelight.stopCommand(), limelight));
+    //  limelight.setDefaultCommand(new RunCommand(()->limelight.stopCommand(), limelight));
 
         shooter.setDefaultCommand(new InstantCommand(() -> shooter.setState(ShooterConstants.kShooterIdle), shooter));
 
 
-//  intake.setDefaultCommand(new InstantCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
-//  shooter.setDefaultCommand(new RunCommand(()-> shooter.setShootingPower(m_Controller.getLeftX()), shooter));
+    //  intake.setDefaultCommand(new InstantCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
+    //  shooter.setDefaultCommand(new RunCommand(()-> shooter.setShootingPower(m_Controller.getLeftX()), shooter));
 
 
-//   autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser = AutoBuilder.buildAutoChooser();
 
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
     }
 
@@ -93,9 +99,7 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-
-
-        return null;
+        return autoChooser.getSelected();
     }
 
     public void shuffleboardData() {

@@ -106,8 +106,6 @@ public class DriveSubsystem extends SubsystemBase {
             // Handle exception as needed
             e.printStackTrace();
         }
-
-
     }
 
     public static double StepTowards(double _current, double _target, double _stepsize) {
@@ -215,6 +213,12 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("FieldRelative", DriveConstants.kfieldRelative);
         SmartDashboard.putBoolean("SlowMode", DriveConstants.kSlowMode);
         SmartDashboard.putNumber("GyroAngle", m_gyro.getAngle());
+
+        SmartDashboard.putNumberArray("RobotPose", new double[]{
+                getPose().getX(),
+                getPose().getY(),
+                getPose().getRotation().getRadians()
+        });
     }
 
     /**
@@ -394,9 +398,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public Command resetGyro() {
-        return Commands.runOnce(() -> {
-            m_gyro.reset();
-        }, this);
+        return Commands.runOnce(m_gyro::reset, this);
     }
 
     /**

@@ -3,16 +3,8 @@ package frc.robot.led;
 import frc.robot.Constants;
 
 public class LEDHandler {
-    public enum State {
-        OFF,
-        IDLE,
-        READY_TO_SHOOT,
-        NOT_READY_TO_SHOOT,
-        ALLIANCE_SHIFT_OCCURRING
-    }
-    private State state;
-
     private final TejuinoBoard tejuinoBoard = new TejuinoBoard();
+    private State state;
 
     public LEDHandler() {
         this.tejuinoBoard.init(Constants.LEDConstants.TEJUINO_CAN_ID);
@@ -41,5 +33,13 @@ public class LEDHandler {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public enum State {
+        OFF,
+        IDLE,
+        READY_TO_SHOOT,
+        NOT_READY_TO_SHOOT,
+        ALLIANCE_SHIFT_OCCURRING
     }
 }

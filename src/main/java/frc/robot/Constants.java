@@ -73,12 +73,9 @@ public class Constants {
         // SPARK MAX CAN IDs
         public static final int kFrontLeftDrivingCanId = 21;
         public static final int kFrontRightDrivingCanId = 22;
-        //    public static final double kFrontLeftChassisAngularOffset = Math.PI;
-        // public static final double kFrontRightChassisAngularOffset = -Math.PI /2 ;
-        // public static final double kBackLeftChassisAngularOffset = Math.PI/2;
-        // public static final double kBackRightChassisAngularOffset = 0;
         public static final int kRearRightDrivingCanId = 23;
         public static final int kRearLeftDrivingCanId = 24;
+
         public static final int kFrontLeftTurningCanId = 11;
         public static final int kFrontRightTurningCanId = 12;
         public static final int kRearRightTurningCanId = 13;
