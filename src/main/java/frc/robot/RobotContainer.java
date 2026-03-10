@@ -9,6 +9,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -16,6 +17,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.intakeConstants;
+import frc.robot.led.LEDHandler;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.Limelight;
@@ -32,6 +34,8 @@ public class RobotContainer {
     Limelight limelight = new Limelight(Chassis);
 
     IntakeSubsystem intake = new IntakeSubsystem();
+
+    private LEDHandler ledHandler;
     private final SendableChooser<Command> autoChooser;
 
     CommandXboxController m_Controller = new CommandXboxController(0);
@@ -56,6 +60,8 @@ public class RobotContainer {
 //  intake.setDefaultCommand(new InstantCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
 //  shooter.setDefaultCommand(new RunCommand(()-> shooter.setShootingPower(m_Controller.getLeftX()), shooter));
 
+
+        ledHandler = new LEDHandler();
 
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -88,11 +94,15 @@ public class RobotContainer {
                 .whileFalse(new RunCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
         m_Controller.rightBumper().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake));
         m_Controller.leftBumper().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake));
+
+        m_Controller.b()
+                .toggleOnTrue(Commands.runOnce(() -> ledHandler.setState(LEDHandler.State.IDLE)))
+                .toggleOnFalse(Commands.runOnce(() -> ledHandler.setState(LEDHandler.State.OFF)));
     }
 
 
     public Command getAutonomousCommand(){
-        return null;
+        return autoChooser.getSelected();
     }
 
     public void shuffleboardData(){

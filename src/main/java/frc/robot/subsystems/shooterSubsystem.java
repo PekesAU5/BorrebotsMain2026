@@ -55,11 +55,6 @@ public class shooterSubsystem extends SubsystemBase {
 
 
     public void setShootingPower(double output){
-
-
-
-
-
         if(ShooterConstants.kShooterReversed){leftMotor.set(VictorSPXControlMode.PercentOutput, output);}
         else{leftMotor.set(VictorSPXControlMode.PercentOutput, output);}
     }
@@ -67,7 +62,6 @@ public class shooterSubsystem extends SubsystemBase {
     public void reverseShoot(){
         ShooterConstants.kShooterReversed = !ShooterConstants.kShooterReversed;
     }
-
 
     public boolean ShooterActive(){
         if(shooteroutput > 0.4){
@@ -101,7 +95,6 @@ public class shooterSubsystem extends SubsystemBase {
 
     }
 
-
     public void setPowers(double shooteroutput, double transferoutput, double transfer2output){
         this.shooteroutput = shooteroutput;
         this.transferoutput = transferoutput;
@@ -132,7 +125,6 @@ public class shooterSubsystem extends SubsystemBase {
 
         switch (state) {
             case IDLE:
-
                 setShootingPower(0.15);
 
                 Transferpower(0.0, 0.0);
