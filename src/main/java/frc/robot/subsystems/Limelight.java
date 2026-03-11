@@ -19,7 +19,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.LimelightConstats;
 
 
-
 /** Add your docs here. */
 public class Limelight extends SubsystemBase{
     public String LL = "limelight-ll" ;
@@ -30,9 +29,9 @@ public class Limelight extends SubsystemBase{
     PIDController zPidController;
     PIDController yPidController;
     PIDController xPidController;
-    
-    
-double velocityoffset = 0.0;
+
+
+    double velocityoffset = 0.0;
 
 
 
@@ -46,62 +45,62 @@ double velocityoffset = 0.0;
         // xPidController.setSetpoint(limelightConstants.xRightReefSetpoint);
         xPidController.setTolerance(LimelightConstats.xPosTolerance);
 
-      
+
 
         yPidController.setSetpoint(LimelightConstats.yPosSetpoint);
-        
+
         yPidController.setTolerance(LimelightConstats.yPosTolerance);
 
         zPidController.setSetpoint(LimelightConstats.rotPosTolerance);
         // zPidController.setTolerance(limelightConstants.rotReefTolerance);
-      
+
         zPidController.enableContinuousInput(-180.0, 180);
 
 
 
-  
-        
+
+
 
     }
 
     @Override
-   public void periodic(){
-    SmartDashboard.putNumber("Ty", getTy());
-SmartDashboard.putNumber("Tx", getTx());
-SmartDashboard.putBoolean("HasTarget", hasTarget());
-SmartDashboard.putBoolean("isAlligned", isAlligned());
-SmartDashboard.putNumber("yError", yPidController.getError());
-SmartDashboard.putNumber("xError", xPidController.getError());
-SmartDashboard.putNumber("xSetpoint", LimelightConstats.xPosSetpoint);
-SmartDashboard.putNumber("zSetpoint", LimelightConstats.yPosSetpoint);
-SmartDashboard.putNumber("DesiredRotation", getDesiredRotation());
-SmartDashboard.putNumber("Rotation Error", zPidController.getError());
-   SmartDashboard.putNumber("VelocityOffset", velocityoffset);
+    public void periodic(){
+        SmartDashboard.putNumber("Ty", getTy());
+        SmartDashboard.putNumber("Tx", getTx());
+        SmartDashboard.putBoolean("HasTarget", hasTarget());
+        SmartDashboard.putBoolean("isAlligned", isAlligned());
+        SmartDashboard.putNumber("yError", yPidController.getError());
+        SmartDashboard.putNumber("xError", xPidController.getError());
+        SmartDashboard.putNumber("xSetpoint", LimelightConstats.xPosSetpoint);
+        SmartDashboard.putNumber("zSetpoint", LimelightConstats.yPosSetpoint);
+        SmartDashboard.putNumber("DesiredRotation", getDesiredRotation());
+        SmartDashboard.putNumber("Rotation Error", zPidController.getError());
+        SmartDashboard.putNumber("VelocityOffset", velocityoffset);
 
-if(!hasTarget()){
-    xoutput = 0.0;
-    youtput = 0.0;
-    rotoutput = 0.0;
-}
-   } 
+        if(!hasTarget()){
+            xoutput = 0.0;
+            youtput = 0.0;
+            rotoutput = 0.0;
+        }
+    }
 
-   public int priorityTag(){
-     int id = (DriverStation.getAlliance().get()  ==  DriverStation.Alliance.Blue) ? 25 : 10;
-return id;
-    
-   }
+    public int priorityTag(){
+        int id = (DriverStation.getAlliance().get()  ==  DriverStation.Alliance.Blue) ? 25 : 10;
+        return id;
+
+    }
 
     public double getTy(){
         double positions = LimelightHelpers.getTargetPose3d_RobotSpace(LL).getZ();
         return positions*10;
     }
 
-    
+
     public double getTx(){
-     
+
         double positions = LimelightHelpers.getTargetPose3d_RobotSpace(LL).getX();
-        
-       return positions*10;
+
+        return positions*10;
 
 
     }
@@ -114,36 +113,36 @@ return id;
 
     public double getDesiredRotation(){
 
-      double Ty = LimelightHelpers.getTargetPose3d_RobotSpace(LL).getZ();
-    double Tx = LimelightHelpers.getTargetPose3d_RobotSpace(LL).getX();
+        double Ty = LimelightHelpers.getTargetPose3d_RobotSpace(LL).getZ();
+        double Tx = LimelightHelpers.getTargetPose3d_RobotSpace(LL).getX();
 
 
-    double vx = driveSubsystem.getRobotRelativeSpeeds().vxMetersPerSecond;
-    double vy = driveSubsystem.getRobotRelativeSpeeds().vyMetersPerSecond;
-
-    
-   
+        double vx = driveSubsystem.getRobotRelativeSpeeds().vxMetersPerSecond;
+        double vy = driveSubsystem.getRobotRelativeSpeeds().vyMetersPerSecond;
 
 
 
-    switch (getId()) {
-        case 8: Tx = Tx - Units.inchesToMeters(5); break;
 
-        case 24: Tx = Tx - Units.inchesToMeters(5); break;
 
-        case 11: Tx = Tx + Units.inchesToMeters(5); break;
 
-        case 9 : Tx = Tx - Units.inchesToMeters(12); break;
-        case 27: Tx = Tx + Units.inchesToMeters(5); break;
-        default: break;
-    }
+        switch (getId()) {
+            case 8: Tx = Tx - Units.inchesToMeters(5); break;
 
-    velocityoffset =  Math.atan2(vy, vx);
+            case 24: Tx = Tx - Units.inchesToMeters(5); break;
 
-    double desiredRotation = Math.atan2(Ty, Tx);
+            case 11: Tx = Tx + Units.inchesToMeters(5); break;
 
-    desiredRotation =90 - Math.toDegrees(desiredRotation);
-        
+            case 9 : Tx = Tx - Units.inchesToMeters(12); break;
+            case 27: Tx = Tx + Units.inchesToMeters(5); break;
+            default: break;
+        }
+
+        velocityoffset =  Math.atan2(vy, vx);
+
+        double desiredRotation = Math.atan2(Ty, Tx);
+
+        desiredRotation =90 - Math.toDegrees(desiredRotation);
+
         return desiredRotation;
     }
     public double getTa(){
@@ -153,7 +152,7 @@ return id;
     public double getTxnc(){
         return NetworkTableInstance.getDefault().getTable("limelight-ll").getEntry("txnc").getDouble(0);
     }
-    
+
     public boolean hasTarget(){
         return LimelightHelpers.getTV(LL);
     }
@@ -161,54 +160,54 @@ return id;
     public int getId() {
         return (int)LimelightHelpers.getFiducialID(LL);
     }
-    
-    public void stopCommand(){
-      
 
-            driveSubsystem.drive(0, 0, 0, false);
-       
+    public void stopCommand(){
+
+
+        driveSubsystem.drive(0, 0, 0, false);
+
     }
 
 
 
 
-  
+
     public void ResetPids(){
         xPidController.reset();
         yPidController.reset();
         zPidController.reset();
     }
 
-    
+
     public boolean isAlligned(){
         if(xPidController.atSetpoint() && yPidController.atSetpoint()
-            ){
+        ){
             return true;
-         }else{
-                return false;
-         }
+        }else{
+            return false;
+        }
     }
 
     public Command AllignXAxis(CommandXboxController controller){
 
         return Commands.run(()->{
-           if(hasTarget()){
-            // double youtput = yPidController.calculate(getTy
-            // double xoutput = xPidController.calculate(getTx()); 
-            double rotoutput = zPidController.calculate(getRy(), getDesiredRotation()) ;
-            driveSubsystem.drive(0.2*MathUtil.applyDeadband(-controller.getLeftX(), 0.1), 
-           0.2*MathUtil.applyDeadband(controller.getLeftY(), 0.1) //   youtput *0.2 
-               , -rotoutput*0.5
-               , false);
+            if(hasTarget()){
+                // double youtput = yPidController.calculate(getTy
+                // double xoutput = xPidController.calculate(getTx());
+                double rotoutput = zPidController.calculate(getRy(), getDesiredRotation()) ;
+                driveSubsystem.drive(0.2*MathUtil.applyDeadband(-controller.getLeftX(), 0.1),
+                        0.2*MathUtil.applyDeadband(controller.getLeftY(), 0.1) //   youtput *0.2
+                        , -rotoutput*0.5
+                        , false);
             }
             else{
-               
+
                 driveSubsystem.drive(0.2*MathUtil.applyDeadband(-controller.getLeftX(), 0.1),
-                 0.2*MathUtil.applyDeadband(controller.getLeftY(), 0.1),
-                 0.2*MathUtil.applyDeadband(-controller.getRightX(), 0.1), DriveConstants.kfieldRelative);
+                        0.2*MathUtil.applyDeadband(controller.getLeftY(), 0.1),
+                        0.2*MathUtil.applyDeadband(-controller.getRightX(), 0.1), DriveConstants.kfieldRelative);
             }
 
-    }, driveSubsystem).beforeStarting(()-> ResetPids());
+        }, driveSubsystem).beforeStarting(()-> ResetPids());
 
-}
+    }
 }
