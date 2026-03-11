@@ -108,8 +108,9 @@ public class RobotContainer {
         m_Controller1.L2(0.05)
                 .whileTrue(new RunCommand(()->intake.setState(intakeConstants.kIntakingState), intake))
                 .whileFalse(new RunCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
-        m_Controller1.R1().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake));
-        m_Controller1.L1().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake));
+        
+        m_Controller1.R1().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake)); //Reversa del intake
+        m_Controller1.L1().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake)); //Regresa todo
 
        
 
