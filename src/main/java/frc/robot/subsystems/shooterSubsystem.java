@@ -49,7 +49,9 @@ public class shooterSubsystem extends SubsystemBase {
 
     Timer timer = new Timer();
 
-    double shooteroutput = 0.95;
+    double shooterOutput = 0.95;
+    double lutShooterOutput = 0.0;
+
     double transferoutput = 0.8;
     double transfer2output = 0.8;
 
@@ -70,10 +72,10 @@ public class shooterSubsystem extends SubsystemBase {
 
     /**
      * A distance meter se le pasa la distancia obtenida a partir de la limelight (en metros)
-     * @param distanceMeters
+     * @param distanceMeters distance from limelight
      */
-    public void setOutputFromDistance(double distanceMeters) {
-        shooteroutput = SHOOTER_LUT.get(distanceMeters);
+    public void updateLUT(double distanceMeters) {
+        lutShooterOutput = Math.clamp(SHOOTER_LUT.get(distanceMeters), ShooterConstants.SHOOTER_LUT_MIN, ShooterConstants.SHOOTER_LUT_MAX);
     }
 
     public void setShootingPower(double output){
@@ -86,7 +88,7 @@ public class shooterSubsystem extends SubsystemBase {
     }
 
     public boolean ShooterActive(){
-        if(shooteroutput > 0.4){
+        if(shooterOutput > 0.4){
             return true;
 
         }
@@ -94,7 +96,7 @@ public class shooterSubsystem extends SubsystemBase {
     }
 
     public boolean ShooterCharged(){
-        if( MathUtil.isNear(shooteroutput, leftMotor.getMotorOutputPercent(), 0.075) ){
+        if( MathUtil.isNear(shooterOutput, leftMotor.getMotorOutputPercent(), 0.075) ){
             return true;
         }
         return false;
@@ -118,7 +120,7 @@ public class shooterSubsystem extends SubsystemBase {
     }
 
     public void setPowers(double shooteroutput, double transferoutput, double transfer2output){
-        this.shooteroutput = shooteroutput;
+        this.shooterOutput = shooteroutput;
         this.transferoutput = transferoutput;
         this.transfer2output = transfer2output;
 
@@ -145,6 +147,7 @@ public class shooterSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("ShooterActive", ShooterCharged());
         SmartDashboard.putString("shooterState", state.toString());
 
+        //updateLUT(dist)
         switch (state) {
             case IDLE:
                 setShootingPower(0.15);
@@ -162,7 +165,7 @@ public class shooterSubsystem extends SubsystemBase {
             case ACTIVE:
 
                 timer.start();
-                setShootingPower(shooteroutput);
+                setShootingPower(shooterOutput);
 
                 if(timer.advanceIfElapsed(1)){state = ShootingStates.CHARGED;
                     Transferpower(transferoutput,transfer2output);}
@@ -177,6 +180,6 @@ public class shooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("transferoutput", transferMotor.getMotorOutputPercent());
         SmartDashboard.putNumber("transfer2output", transfer2Motor.getMotorOutputPercent());
         SmartDashboard.putNumber("shooterOutput", leftMotor.getMotorOutputPercent());
-
+        SmartDashboard.putNumber("LUT Shooter Output", this.lutShooterOutput);
     }
 }

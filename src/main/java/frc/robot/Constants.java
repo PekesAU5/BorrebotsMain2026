@@ -26,6 +26,9 @@ public class Constants {
         public static int kShooterActiveState = 1;
         public static int kShooterIdle = 0;
         public static int kShooterChargedState = 2;
+
+        public static double SHOOTER_LUT_MIN = 0.6;
+        public static double SHOOTER_LUT_MAX = 0.9;
     }
 
     public static final class intakeConstants{
