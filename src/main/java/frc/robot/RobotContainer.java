@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriveConstants;
@@ -40,7 +41,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     CommandXboxController m_Controller = new CommandXboxController(0);
-    CommandXboxController m_Controller1 = new CommandXboxController(1);
+    CommandPS5Controller m_Controller1 = new CommandPS5Controller(1);
 
 
     public RobotContainer(){
@@ -83,9 +84,7 @@ public class RobotContainer {
 
         m_Controller.rightBumper().whileTrue(limelight.AllignXAxis(m_Controller));
 
-        m_Controller.rightTrigger(0.05)
-                .whileTrue(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterActiveState), shooter))
-                .whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
+        m_Controller.b().whileTrue(limelight.AllignXAxis(m_Controller));
 
 
         // m_Controller.rightTrigger(0.05).whileTrue(Commands.run(()->{transfer.activateTransfer(0.6);}, transfer).unless(()->!shooter.ShooterCharged()));
@@ -99,12 +98,20 @@ public class RobotContainer {
 
         // m_Controller.a().onTrue(new InstantCommand(()-> Chassis.zeroHeading(), Chassis));
 
-        m_Controller.leftTrigger(0.05)
+        //Subsystem Controls
+
+         m_Controller1.R2(0.05)
+                .whileTrue(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterActiveState), shooter))
+                .whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
+
+
+        m_Controller1.L2(0.05)
                 .whileTrue(new RunCommand(()->intake.setState(intakeConstants.kIntakingState), intake))
                 .whileFalse(new RunCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
-        m_Controller.rightBumper().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake));
-        m_Controller.leftBumper().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake));
-        m_Controller.b().whileTrue(limelight.AllignXAxis(m_Controller));
+        m_Controller1.R1().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake));
+        m_Controller1.L1().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake));
+
+       
 
         /*
         m_Controller.b()
