@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,10 +16,24 @@ import frc.robot.Constants.ShooterConstants;
 
 public class shooterSubsystem extends SubsystemBase {
 
-    public enum ShootingStates{
+    public enum ShootingStates {
         ACTIVE,
         CHARGED,
         IDLE
+    }
+
+    private static final InterpolatingDoubleTreeMap SHOOTER_LUT = new InterpolatingDoubleTreeMap();
+    static {
+        //aqui se añaden los datos del tiro (EJEMPLO)
+        SHOOTER_LUT.put(
+                5.0, //distancia (metros)
+                0.85 //poder motor
+        );
+        SHOOTER_LUT.put(
+                3.0,
+                0.65
+        );
+        //añadir los mas datos posibles
     }
 
     ShootingStates state = ShootingStates.IDLE;
@@ -53,6 +68,13 @@ public class shooterSubsystem extends SubsystemBase {
         transfer2pid = new PIDController(1, 0.0, 0.0);
     }
 
+    /**
+     * A distance meter se le pasa la distancia obtenida a partir de la limelight (en metros)
+     * @param distanceMeters
+     */
+    public void setOutputFromDistance(double distanceMeters) {
+        shooteroutput = SHOOTER_LUT.get(distanceMeters);
+    }
 
     public void setShootingPower(double output){
         if(ShooterConstants.kShooterReversed){leftMotor.set(VictorSPXControlMode.PercentOutput, output);}
@@ -134,6 +156,7 @@ public class shooterSubsystem extends SubsystemBase {
                     timer.reset();
                 }
 
+                //update LUT data
                 break;
 
             case ACTIVE:
@@ -143,7 +166,7 @@ public class shooterSubsystem extends SubsystemBase {
 
                 if(timer.advanceIfElapsed(1)){state = ShootingStates.CHARGED;
                     Transferpower(transferoutput,transfer2output);}
-
+                break;
 
             case CHARGED:
 
@@ -154,5 +177,6 @@ public class shooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("transferoutput", transferMotor.getMotorOutputPercent());
         SmartDashboard.putNumber("transfer2output", transfer2Motor.getMotorOutputPercent());
         SmartDashboard.putNumber("shooterOutput", leftMotor.getMotorOutputPercent());
+
     }
 }
