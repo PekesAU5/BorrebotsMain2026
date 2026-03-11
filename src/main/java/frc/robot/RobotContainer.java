@@ -5,10 +5,12 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -60,6 +62,13 @@ public class RobotContainer {
 //  shooter.setDefaultCommand(new RunCommand(()-> shooter.setShootingPower(m_Controller.getLeftX()), shooter));
 
 
+        NamedCommands.registerCommand("setShooterStateActive", new RunCommand(() -> shooter.setState(ShooterConstants.kShooterActiveState), shooter));
+        NamedCommands.registerCommand("setShooterStateIdle", new RunCommand(() -> shooter.setState(ShooterConstants.kShooterIdle), shooter));
+
+        NamedCommands.registerCommand("setIntakeStateHome", new RunCommand(() -> intake.setState(intakeConstants.kintakeHomeState), intake));
+        NamedCommands.registerCommand("setIntakeStateIntaking", new RunCommand(() -> intake.setState(intakeConstants.kIntakingState), intake));
+        NamedCommands.registerCommand("setIntakeStateIdle", new RunCommand(() -> intake.setState(intakeConstants.kintakeIdleState), intake));
+
         ledHandler = new LEDHandler();
 
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -74,7 +83,9 @@ public class RobotContainer {
 
         m_Controller.rightBumper().whileTrue(limelight.AllignXAxis(m_Controller));
 
-        m_Controller.rightTrigger(0.05).whileTrue(new RunCommand(()->shooter.setState(ShooterConstants.kShooterActiveState), shooter)).whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
+        m_Controller.rightTrigger(0.05)
+                .whileTrue(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterActiveState), shooter))
+                .whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
 
 
         // m_Controller.rightTrigger(0.05).whileTrue(Commands.run(()->{transfer.activateTransfer(0.6);}, transfer).unless(()->!shooter.ShooterCharged()));
@@ -93,10 +104,16 @@ public class RobotContainer {
                 .whileFalse(new RunCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
         m_Controller.rightBumper().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake));
         m_Controller.leftBumper().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake));
+        m_Controller.b().whileTrue(limelight.AllignXAxis(m_Controller));
 
+        /*
         m_Controller.b()
-                .toggleOnTrue(Commands.runOnce(() -> ledHandler.setState(LEDHandler.State.IDLE)))
-                .toggleOnFalse(Commands.runOnce(() -> ledHandler.setState(LEDHandler.State.OFF)));
+                .toggleOnTrue(Commands.runOnce(() -> ledHandler.setState(LEDHandler.State.READY_TO_SHOOT)));
+        m_Controller.y()
+                .toggleOnTrue(Commands.runOnce(() -> ledHandler.setState(LEDHandler.State.IDLE)));
+         */
+
+
     }
 
 

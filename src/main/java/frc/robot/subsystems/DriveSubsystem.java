@@ -192,6 +192,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("GyroAngle", getHeading());
         // Update the odometry in the periodic block
         m_odometry.update(
                 Rotation2d.fromDegrees(m_gyro.getAngle() * -1),
@@ -212,7 +213,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("FieldRelative", DriveConstants.kfieldRelative);
         SmartDashboard.putBoolean("SlowMode", DriveConstants.kSlowMode);
-        SmartDashboard.putNumber("GyroAngle", m_gyro.getAngle());
+
 
         SmartDashboard.putNumberArray("RobotPose", new double[]{
                 getPose().getX(),
@@ -407,7 +408,8 @@ public class DriveSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     public double getHeading() {
-        return Rotation2d.fromDegrees(m_gyro.getAngle()).getDegrees();
+        return m_gyro.getYaw();
+
     }
 
     /**

@@ -1,0 +1,77 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.9467189728958629,
+        "y": 0.6386019971469341
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.946718972895863,
+        "y": 0.6386019971469343
+      },
+      "isLocked": false,
+      "linkedName": "Handoff Outpost Bottom"
+    },
+    {
+      "anchor": {
+        "x": 1.942855421686747,
+        "y": 1.9040963855421684
+      },
+      "prevControl": {
+        "x": 1.2216265060240965,
+        "y": 1.357710843373494
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.6,
+        "y": 4.0
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.6648514851485045,
+      "maxWaypointRelativePos": 1.0,
+      "name": "Shoot"
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "",
+      "waypointRelativePos": 0.6351485148514621,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "setShooterStateActive"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.8,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 38.659808254090095
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}
