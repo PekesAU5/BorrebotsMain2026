@@ -62,6 +62,7 @@ public class RobotContainer {
 //  intake.setDefaultCommand(new InstantCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
 //  shooter.setDefaultCommand(new RunCommand(()-> shooter.setShootingPower(m_Controller.getLeftX()), shooter));
 
+        NamedCommands.registerCommand("resetGyroAngle", Commands.runOnce(() -> Chassis.setGyroAngle(-90)));
 
         NamedCommands.registerCommand("setShooterStateActive", new RunCommand(() -> shooter.setState(ShooterConstants.kShooterActiveState), shooter));
         NamedCommands.registerCommand("setShooterStateIdle", new RunCommand(() -> shooter.setState(ShooterConstants.kShooterIdle), shooter));
@@ -100,19 +101,17 @@ public class RobotContainer {
 
         //Subsystem Controls
 
-         m_Controller1.R2(0.05)
+         m_Controller1.R2()
                 .whileTrue(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterActiveState), shooter))
                 .whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
 
 
-        m_Controller1.L2(0.05)
+        m_Controller1.L2()
                 .whileTrue(new RunCommand(()->intake.setState(intakeConstants.kIntakingState), intake))
                 .whileFalse(new RunCommand(()->intake.setState(intakeConstants.kintakeIdleState), intake));
         
         m_Controller1.R1().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake)); //Reversa del intake
         m_Controller1.L1().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake)); //Regresa todo
-
-       
 
         /*
         m_Controller.b()

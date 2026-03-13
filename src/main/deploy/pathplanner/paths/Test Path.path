@@ -3,60 +3,58 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.019120481927711,
-        "y": 0.6386019971469341
+        "x": 4.379734939759036,
+        "y": 7.378879518072289
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.746365737359678,
-        "y": 0.6613240622115234
+        "x": 5.379734939759036,
+        "y": 7.378879518072289
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.8282289156626503,
-        "y": 0.6386019971469341
+        "x": 7.778253012048193,
+        "y": 7.378879518072289
       },
       "prevControl": {
-        "x": 2.0847794718410344,
-        "y": 0.6222544729572137
+        "x": 6.778253012048193,
+        "y": 7.378879518072289
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Handoff Outpost Bottom"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "",
-      "waypointRelativePos": 0.31060094530723564,
+      "waypointRelativePos": 0.03910891089108788,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "setIntakeStateIntaking"
-        }
-      }
-    },
-    {
-      "name": "",
-      "waypointRelativePos": 0.7777227722772126,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "setIntakeStateIdle"
+          "name": "resetGyroAngle"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.8,
+    "maxVelocity": 1.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -73,5 +71,5 @@
     "velocity": 0,
     "rotation": 0.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

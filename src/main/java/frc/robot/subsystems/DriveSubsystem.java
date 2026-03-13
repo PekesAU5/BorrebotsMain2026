@@ -50,7 +50,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Odometry class for tracking robot pose
     SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
             DriveConstants.kDriveKinematics,
-            Rotation2d.fromDegrees(m_gyro.getAngle() * -1),
+            getGyroAngle(),
             new SwerveModulePosition[]{
                     m_frontLeft.getPosition(),
                     m_frontRight.getPosition(),
@@ -106,6 +106,10 @@ public class DriveSubsystem extends SubsystemBase {
             // Handle exception as needed
             e.printStackTrace();
         }
+    }
+
+    public Rotation2d getGyroAngle() {
+        return Rotation2d.fromDegrees(-m_gyro.getAngle());
     }
 
     public static double StepTowards(double _current, double _target, double _stepsize) {
@@ -192,10 +196,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("GyroAngle", getHeading());
+        SmartDashboard.putNumber("GyroAngle", getGyroAngle().getDegrees());
         // Update the odometry in the periodic block
         m_odometry.update(
-                Rotation2d.fromDegrees(m_gyro.getAngle() * -1),
+                getGyroAngle(),
                 new SwerveModulePosition[]{
                         m_frontLeft.getPosition(),
                         m_frontRight.getPosition(),
@@ -213,7 +217,6 @@ public class DriveSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("FieldRelative", DriveConstants.kfieldRelative);
         SmartDashboard.putBoolean("SlowMode", DriveConstants.kSlowMode);
-
 
         SmartDashboard.putNumberArray("RobotPose", new double[]{
                 getPose().getX(),
@@ -238,7 +241,7 @@ public class DriveSubsystem extends SubsystemBase {
      */
     public void resetOdometry(Pose2d pose) {
         m_odometry.resetPosition(
-                Rotation2d.fromDegrees(m_gyro.getAngle() * -1),
+                getGyroAngle(),
                 new SwerveModulePosition[]{
                         m_frontLeft.getPosition(),
                         m_frontRight.getPosition(),
@@ -246,6 +249,10 @@ public class DriveSubsystem extends SubsystemBase {
                         m_rearRight.getPosition()
                 },
                 pose);
+    }
+
+    public void setGyroAngle(double angle) {
+        this.m_gyro.setAngleAdjustment(angle);
     }
 
     /**
@@ -319,7 +326,7 @@ public class DriveSubsystem extends SubsystemBase {
         SwerveModuleState[] swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
                 fieldRelative
                         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                        Rotation2d.fromDegrees(m_gyro.getAngle() * -1))
+                        getGyroAngle())
                         : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
         SwerveDriveKinematics.desaturateWheelSpeeds(
                 swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -408,8 +415,7 @@ public class DriveSubsystem extends SubsystemBase {
      * @return the robot's heading in degrees, from -180 to 180
      */
     public double getHeading() {
-        return m_gyro.getYaw();
-
+        return -m_gyro.getYaw();
     }
 
     /**

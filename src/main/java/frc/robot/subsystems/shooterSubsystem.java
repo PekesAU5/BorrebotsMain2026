@@ -42,19 +42,15 @@ public class shooterSubsystem extends SubsystemBase {
     private PIDController shooterpid;
 
     private VictorSPX transferMotor;
-    private VictorSPX transfer2Motor;
 
     private PIDController transferpid;
-    private PIDController transfer2pid;
 
     Timer timer = new Timer();
 
-    double shooterOutput = 0.95;
+    double shooterOutput = 0.8;
     double lutShooterOutput = 0.0;
 
     double transferoutput = 0.8;
-    double transfer2output = 0.8;
-
 
     /** Creates a new shooterSubsystem. */
     public shooterSubsystem() {
@@ -64,10 +60,8 @@ public class shooterSubsystem extends SubsystemBase {
         shooterpid = new PIDController(1, 0.0, 0.0);
 
         transferMotor = new VictorSPX(3);
-        transfer2Motor = new VictorSPX(4);
 
         transferpid = new PIDController(1, 0.0, 0.0);
-        transfer2pid = new PIDController(1, 0.0, 0.0);
     }
 
     /**
@@ -119,25 +113,21 @@ public class shooterSubsystem extends SubsystemBase {
 
     }
 
-    public void setPowers(double shooteroutput, double transferoutput, double transfer2output){
+    public void setPowers(double shooteroutput, double transferoutput){
         this.shooterOutput = shooteroutput;
         this.transferoutput = transferoutput;
-        this.transfer2output = transfer2output;
 
     }
 
-    public void Transferpower(double output, double output2){
+    public void Transferpower(double output){
 
         transferpid.calculate(transferMotor.getMotorOutputPercent(),output);
         transferMotor.set(VictorSPXControlMode.PercentOutput, output);
 
-        transfer2pid.calculate(transfer2Motor.getMotorOutputPercent(),output2);
-        transfer2Motor.set(VictorSPXControlMode.PercentOutput, output2);
     }
 
     public void stopTransfer(){
         transferMotor.set(VictorSPXControlMode.PercentOutput, 0.0);
-        transfer2Motor.set(VictorSPXControlMode.PercentOutput, 0.0);
     }
 
 
@@ -152,7 +142,7 @@ public class shooterSubsystem extends SubsystemBase {
             case IDLE:
                 setShootingPower(0.15);
 
-                Transferpower(0.0, 0.0);
+                Transferpower(0.0);
 
                 if(timer.isRunning()){
                     timer.stop();
@@ -167,8 +157,10 @@ public class shooterSubsystem extends SubsystemBase {
                 timer.start();
                 setShootingPower(shooterOutput);
 
-                if(timer.advanceIfElapsed(1)){state = ShootingStates.CHARGED;
-                    Transferpower(transferoutput,transfer2output);}
+                if(timer.advanceIfElapsed(1.5)) {
+                    state = ShootingStates.CHARGED;
+                    Transferpower(transferoutput);
+                }
                 break;
 
             case CHARGED:
@@ -178,7 +170,6 @@ public class shooterSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("time", timer.get());
         SmartDashboard.putNumber("transferoutput", transferMotor.getMotorOutputPercent());
-        SmartDashboard.putNumber("transfer2output", transfer2Motor.getMotorOutputPercent());
         SmartDashboard.putNumber("shooterOutput", leftMotor.getMotorOutputPercent());
         SmartDashboard.putNumber("LUT Shooter Output", this.lutShooterOutput);
     }
