@@ -105,6 +105,11 @@ public class RobotContainer {
                 .whileTrue(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterActiveState), shooter))
                 .whileFalse(new RunCommand(()->shooter.setState(ShooterConstants.kShooterIdle), shooter));
 
+        m_Controller1.options()
+                        .onTrue(Commands.runOnce(() -> shooter.toggleRunMode()));
+        m_Controller1.triangle()
+                        .whileTrue(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterManualReverseState), shooter))
+                                .whileFalse(new RunCommand(() -> shooter.setState(ShooterConstants.kShooterIdle)));
 
         m_Controller1.L2()
                 .whileTrue(new RunCommand(()->intake.setState(intakeConstants.kIntakingState), intake))
@@ -112,6 +117,8 @@ public class RobotContainer {
         
         m_Controller1.R1().whileTrue(new RunCommand(()-> intake.setRollerPower(-0.8), intake)); //Reversa del intake
         m_Controller1.L1().onTrue(new RunCommand(()->intake.setState(intakeConstants.kintakeHomeState), intake)); //Regresa todo
+
+
 
         /*
         m_Controller.b()

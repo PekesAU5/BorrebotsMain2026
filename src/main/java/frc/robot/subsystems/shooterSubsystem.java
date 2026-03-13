@@ -18,8 +18,14 @@ public class shooterSubsystem extends SubsystemBase {
 
     public enum ShootingStates {
         ACTIVE,
-        CHARGED,
-        IDLE
+        READY,
+        IDLE,
+        REVERSE
+    }
+
+    public enum RunMode {
+        AUTOMATIC,
+        STATIC
     }
 
     private static final InterpolatingDoubleTreeMap SHOOTER_LUT = new InterpolatingDoubleTreeMap();
@@ -37,6 +43,7 @@ public class shooterSubsystem extends SubsystemBase {
     }
 
     ShootingStates state = ShootingStates.IDLE;
+    RunMode runMode = RunMode.STATIC;
     private VictorSPX leftMotor;
 
     private PIDController shooterpid;
@@ -45,12 +52,15 @@ public class shooterSubsystem extends SubsystemBase {
 
     private PIDController transferpid;
 
-    Timer timer = new Timer();
+    Timer spoolUpTimer = new Timer();
+    Timer preReadyTimer = new Timer();
 
-    double shooterOutput = 0.8;
+    double staticShooterOutput = 0.8;
     double lutShooterOutput = 0.0;
 
     double transferoutput = 0.8;
+    double transferReverseOutput = -0.4;
+    double transferReverseDuration = 1.5;
 
     /** Creates a new shooterSubsystem. */
     public shooterSubsystem() {
@@ -82,7 +92,7 @@ public class shooterSubsystem extends SubsystemBase {
     }
 
     public boolean ShooterActive(){
-        if(shooterOutput > 0.4){
+        if(staticShooterOutput > 0.4){
             return true;
 
         }
@@ -90,7 +100,7 @@ public class shooterSubsystem extends SubsystemBase {
     }
 
     public boolean ShooterCharged(){
-        if( MathUtil.isNear(shooterOutput, leftMotor.getMotorOutputPercent(), 0.075) ){
+        if( MathUtil.isNear(staticShooterOutput, leftMotor.getMotorOutputPercent(), 0.075) ){
             return true;
         }
         return false;
@@ -107,14 +117,25 @@ public class shooterSubsystem extends SubsystemBase {
                 break;
 
             case 2:
-                state = ShootingStates.CHARGED;
+                state = ShootingStates.READY;
+                break;
+
+            case 3:
+                state = ShootingStates.REVERSE;
                 break;
         }
+    }
 
+    public void toggleRunMode() {
+        if(this.runMode == RunMode.AUTOMATIC) {
+            this.runMode = RunMode.STATIC;
+         } else if(this.runMode == RunMode.STATIC) {
+            this.runMode = RunMode.AUTOMATIC;
+        }
     }
 
     public void setPowers(double shooteroutput, double transferoutput){
-        this.shooterOutput = shooteroutput;
+        this.staticShooterOutput = shooteroutput;
         this.transferoutput = transferoutput;
 
     }
@@ -144,9 +165,9 @@ public class shooterSubsystem extends SubsystemBase {
 
                 Transferpower(0.0);
 
-                if(timer.isRunning()){
-                    timer.stop();
-                    timer.reset();
+                if(spoolUpTimer.isRunning()){
+                    spoolUpTimer.stop();
+                    spoolUpTimer.reset();
                 }
 
                 //update LUT data
@@ -154,21 +175,31 @@ public class shooterSubsystem extends SubsystemBase {
 
             case ACTIVE:
 
-                timer.start();
-                setShootingPower(shooterOutput);
+                spoolUpTimer.start();
+                setShootingPower(this.runMode == RunMode.AUTOMATIC ? lutShooterOutput : staticShooterOutput);
 
-                if(timer.advanceIfElapsed(1.5)) {
-                    state = ShootingStates.CHARGED;
+                if(spoolUpTimer.get() < transferReverseDuration) {
+                    Transferpower(transferReverseOutput);
+                } else {
+                    Transferpower(0.0);
+                }
+
+                if(spoolUpTimer.advanceIfElapsed(1.5)) {
+                    state = ShootingStates.READY;
                     Transferpower(transferoutput);
                 }
                 break;
 
-            case CHARGED:
+            case READY:
 
+                break;
+
+            case REVERSE:
+                Transferpower(transferReverseOutput);
                 break;
         }
 
-        SmartDashboard.putNumber("time", timer.get());
+        SmartDashboard.putNumber("time", spoolUpTimer.get());
         SmartDashboard.putNumber("transferoutput", transferMotor.getMotorOutputPercent());
         SmartDashboard.putNumber("shooterOutput", leftMotor.getMotorOutputPercent());
         SmartDashboard.putNumber("LUT Shooter Output", this.lutShooterOutput);

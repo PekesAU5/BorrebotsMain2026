@@ -121,10 +121,6 @@ public class Limelight extends SubsystemBase{
         double vy = driveSubsystem.getRobotRelativeSpeeds().vyMetersPerSecond;
 
 
-
-
-
-
         switch (getId()) {
             case 8: Tx = Tx - Units.inchesToMeters(5); break;
 
